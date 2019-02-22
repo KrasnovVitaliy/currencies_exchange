@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+
+    <title>Currencies exchange</title>
+</head>
+<body>
+<div class="container">
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Код</th>
+        <th scope="col">Валюта</th>
+        <th scope="col">Курс ЦБ</th>
+        <th scope="col">Покупка Райфазен</th>
+        <th scope="col">Продажа Райфазен</th>
+        <th scope="col">Покупка Лучшая цена</th>
+        <th scope="col">Продажа Лучшая цена</th>
+        <th scope="col">Лучшей покупатель</th>
+        <th scope="col">Лучшей продавец</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in last_currencies %}
+    <tr>
+        <td>{{ item['id'] }}</td>
+        <td>{{ item['code'] }}</td>
+        <td>{{ item['name'] }}</td>
+        <td>{{ item['cb_currency'] }}</td>
+        <td>{{ item['raif_buy'] }}</td>
+        <td>{{ item['raif_sale'] }}</td>
+        <td>{{ item['best_buy'] }}</td>
+        <td>{{ item['best_sale'] }}</td>
+        <td>{{ item['best_buyer'] }}</td>
+        <td>{{ item['best_sailer'] }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    {% for item in old_currencies %}
+    <tr>
+        <td>{{ item['id'] }}</td>
+        <td>{{ item['code'] }}</td>
+        <td>{{ item['name'] }}</td>
+        <td>{{ item['cb_currency'] }}</td>
+        <td>{{ item['raif_buy'] }}</td>
+        <td>{{ item['raif_sale'] }}</td>
+        <td>{{ item['best_buy'] }}</td>
+        <td>{{ item['best_sale'] }}</td>
+        <td>{{ item['best_buyer'] }}</td>
+        <td>{{ item['best_sailer'] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <h3><p class="text-center">Покупка Райфазен</p></h3>
+            <canvas id="RaifBuyCurency" width="200" height="200"></canvas>
+        </div>
+        <div class="col-sm">
+            <h3><p class="text-center">Лучшая покупка</p></h3>
+            <canvas id="BestBuyCurency" width="200" height="200"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm">
+            <h3><p class="text-center">Продажа Райфазен</p></h3>
+            <canvas id="RaifSaleCurency" width="200" height="200"></canvas>
+        </div>
+        <div class="col-sm">
+            <h3><p class="text-center">Лучшая продажа</p></h3>
+            <canvas id="BestSaleCurency" width="200" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+</div>
+<script>
+    console.log(getData({{ usd_raif_buy_currencies | safe }}));
+    function getData(data) {
+        return data;
+    }
+
+    var ctx = document.getElementById("RaifBuyCurency").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: getData({{ dates | safe }}),
+            datasets: [{
+                label: 'USD',
+                data: getData({{ usd_raif_buy_currencies | safe }}),
+                backgroundColor: [
+                    '#95e1e0',
+                ],
+                borderColor: [
+                    '#00c7c5',
+                ],
+                borderWidth: 2
+            },
+                {
+                    label: 'EUR',
+                    data: getData({{ eur_raif_buy_currencies | safe }}),
+                    backgroundColor: [
+                        '#ffe6a1',
+                    ],
+                    borderColor: [
+                        '#ffcf44',
+                    ],
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Time'
+						}
+					}],
+                yAxes: [{
+                    ticks: {
+                        min: 60,
+                        max: 80
+                    }
+                }]
+            }
+        }
+    });
+</script>
+
+<script>
+    function getData(data) {
+        return data;
+    }
+
+    var ctx = document.getElementById("RaifSaleCurency").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: getData({{ dates | safe }}),
+            datasets: [{
+                label: 'USD',
+                data: getData({{ usd_raif_sale_currencies | safe }}),
+                backgroundColor: [
+                    '#95e1e0',
+                ],
+                borderColor: [
+                    '#00c7c5',
+                ],
+                borderWidth: 2
+            },
+                {
+                    label: 'EUR',
+                    data: getData({{ eur_raif_sale_currencies | safe }}),
+                    backgroundColor: [
+                        '#ffe6a1',
+                    ],
+                    borderColor: [
+                        '#ffcf44',
+                    ],
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Time'
+						}
+					}],
+                yAxes: [{
+                    ticks: {
+                        min: 60,
+                        max: 80
+                    }
+                }]
+            }
+        }
+    });
+</script>
+
+<script>
+    function getData(data) {
+        return data;
+    }
+
+    var ctx = document.getElementById("BestBuyCurency").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: getData({{ dates | safe }}),
+            datasets: [{
+                label: 'USD',
+                data: getData({{ usd_best_buy_currencies | safe }}),
+                backgroundColor: [
+                    '#95e1e0',
+                ],
+                borderColor: [
+                    '#00c7c5',
+                ],
+                borderWidth: 2
+            },
+                {
+                    label: 'EUR',
+                    data: getData({{ eur_best_buy_currencies | safe }}),
+                    backgroundColor: [
+                        '#ffe6a1',
+                    ],
+                    borderColor: [
+                        '#ffcf44',
+                    ],
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Time'
+						}
+					}],
+                yAxes: [{
+                    ticks: {
+                        min: 60,
+                        max: 80
+                    }
+                }]
+            }
+        }
+    });
+</script>
+
+<script>
+    function getData(data) {
+        return data;
+    }
+
+    var ctx = document.getElementById("BestSaleCurency").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: getData({{ dates | safe }}),
+            datasets: [{
+                label: 'USD',
+                data: getData({{ usd_best_sale_currencies | safe }}),
+                backgroundColor: [
+                    '#95e1e0',
+                ],
+                borderColor: [
+                    '#00c7c5',
+                ],
+                borderWidth: 2
+            },
+                {
+                    label: 'EUR',
+                    data: getData({{ eur_best_sale_currencies | safe }}),
+                    backgroundColor: [
+                        '#ffe6a1',
+                    ],
+                    borderColor: [
+                        '#ffcf44',
+                    ],
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Time'
+						}
+					}],
+                yAxes: [{
+                    ticks: {
+                        min: 60,
+                        max: 80
+                    }
+                }]
+            }
+        }
+    });
+</script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+</body>
+</html>

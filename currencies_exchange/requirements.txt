@@ -1,0 +1,7 @@
+bs4
+sqlalchemy
+celery
+aiohttp
+aiohttp_jinja2
+jinja2
+sqlalchemy
